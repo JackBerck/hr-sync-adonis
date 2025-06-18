@@ -1,82 +1,273 @@
-@layout.app({title: 'Unit Kerja'})
-
+@layout.app({ title: "Daftar Unit Kerja - HR Sync" })
   @slot('meta')
-    <meta name="description" content="A welcome page made with EdgeJS" />
+    <meta name="description" content="Kelola data unit kerja perusahaan" />
   @endslot
-  <div class="container mx-auto px-4 py-8">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-3xl font-bold tracking-tight text-foreground">
-          Unit Kerja
-        </h1>
-        <p class="text-muted-foreground">
-          Kelola data unit kerja dalam organisasi
-        </p>
+  
+  @slot('breadcrumb')
+    <nav class="flex" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <a
+            href="/dashboard"
+            class="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+              />
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-1 text-sm font-medium text-foreground md:ml-2">Unit Kerja</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+  @endslot
+  
+  @slot('main')
+    <div class="space-y-6">
+      <!-- Flash Messages -->
+      @if(flashMessages.has('success'))
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-green-800">
+                {{ flashMessages.get('success') }}
+              </p>
+            </div>
+          </div>
+        </div>
+      @endif
+      
+      @if(flashMessages.has('error'))
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-red-800">
+                {{ flashMessages.get('error') }}
+              </p>
+            </div>
+          </div>
+        </div>
+      @endif
+      
+      <!-- Header Section -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-foreground">
+            Daftar Unit Kerja
+          </h1>
+          <p class="text-muted-foreground mt-1">
+            Kelola data unit kerja dan lokasi departemen
+          </p>
+        </div>
+        <a
+          href="/unit-kerja/create"
+          class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Tambah Unit Kerja
+        </a>
       </div>
-      <a
-        href="/unit-kerjas/create"
-        class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-      >
-        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 
-        </svg>
-        Tambah Unit Kerja
-    </a>
-    </div>
+      <!-- Search and Filter Section -->
+      <div class="bg-background border rounded-lg p-6 shadow-sm">
+        <form method="GET" action="/unit-kerja" class="space-y-4">
+          <div class="flex flex-col sm:flex-row gap-4">
+            <!-- Search Input -->
+            <div class="flex-1">
+              <label for="search" class="block text-sm font-medium text-foreground mb-2">
+                Cari Unit Kerja
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg class="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="search"
+                  name="search"
+                  value="{{ request.input('search', '') }}"
+                  class="block w-full pl-10 pr-3 py-2 border border-input bg-background rounded-lg text-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Masukkan nama unit atau lokasi..."
+                />
+              </div>
+            </div>
 
-    <!-- Card Container -->
-    <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
-      <!-- Card Header -->
-      <div class="flex flex-col space-y-1.5 p-6 border-b border-border">
-        <h3 class="text-2xl font-semibold leading-none tracking-tight">
-          Daftar Unit Kerja
-        </h3>
-        <p class="text-sm text-muted-foreground">
-          Total: {{ unitKerjas?.meta?.total || 0 }} unit kerja
-        </p>
+            <!-- Search Button -->
+            <div class="flex items-end">
+              <button
+                type="submit"
+                class="inline-flex items-center justify-center rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
+              >
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                Cari
+              </button>
+            </div>
+          </div>
+
+          @if(request.input('search'))
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-muted-foreground">Filter aktif:</span>
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary"
+              >
+                {{ request.input('search') }}
+                <a href="/unit-kerja" class="ml-1 text-primary hover:text-primary/80">
+                  <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </a>
+              </span>
+            </div>
+          @endif
+        </form>
       </div>
 
-      <!-- Card Content -->
-      <div class="p-0">
-        @if(unitKerjas && unitKerjas.data && unitKerjas.data.length > 0)
-          <!-- Table -->
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead>
-                <tr class="border-b border-border">
-                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    No
-                  </th>
-                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Nama Unit
-                  </th>
-                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Lokasi
-                  </th>
-                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                @each(unitKerja in unitKerjas.data)
-                  <tr class="border-b border-border hover:bg-muted/50 transition-colors">
-                    <td class="p-4 align-middle">
-                      {{ $loop.index + 1 }}
+      <!-- Table Section -->
+      <div class="bg-background border rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-border">
+            <thead class="bg-muted/50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  No
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Nama Unit
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Lokasi
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Tanggal Dibuat
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-background divide-y divide-border">
+              @if(unitKerjas.length > 0)
+                @each((unitKerja, index) in unitKerjas)
+                  <tr class="hover:bg-muted/30 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                      {{ index + ((unitKerjas.currentPage - 1) * unitKerjas.perPage) + 1 }}
                     </td>
-                    <td class="p-4 align-middle font-medium">
-                      {{ unitKerja.nama_unit }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="flex-shrink-0 h-8 w-8">
+                          <div class="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                            <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="ml-4">
+                          <div class="text-sm font-medium text-foreground">
+                            {{ unitKerja.nama_unit }}
+                          </div>
+                        </div>
+                      </div>
                     </td>
-                    <td class="p-4 align-middle text-muted-foreground">
-                      {{ unitKerja.lokasi }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <svg class="h-4 w-4 text-muted-foreground mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        <div class="text-sm text-foreground">
+                          {{ unitKerja.lokasi }}
+                        </div>
+                      </div>
                     </td>
-                    <td class="p-4 align-middle">
-                      <div class="flex items-center space-x-2">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                      {{ unitKerja.createdAt.toFormat('dd/MM/yyyy') }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div class="flex items-center justify-end space-x-2">
                         <a
-                          href="/unit-kerjas/{{ unitKerja.id }}/edit"
-                          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                          href="/unit-kerja/{{ unitKerja.id }}"
+                          class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                          title="Lihat Detail"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-4"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                            />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                          </svg>
+                        </a>
+                        <a
+                          href="/unit-kerja/{{ unitKerja.id }}/edit"
+                          class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                          title="Edit"
                         >
                           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
@@ -85,106 +276,183 @@
                               stroke-width="2"
                               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                             />
-
                           </svg>
                         </a>
-                        <form
-                          action="/unit-kerjas/{{ unitKerja.id }}"
-                          method="POST"
-                          class="inline"
-                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus unit kerja ini?')"
+                        <button
+                          onclick="confirmDelete({{ unitKerja.id }}, '{{ unitKerja.nama_unit }}')"
+                          class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-colors"
+                          title="Hapus"
                         >
-                          {{ csrfField() }}
-                          @method('DELETE')
-                            <button
-                              type="submit"
-                              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-destructive hover:text-destructive-foreground h-8 w-8"
-                            >
-                              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-width="2"
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-
-                              </svg>
-                            </button>
-                          </form>
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                @endeach
+              @else
+                <tr>
+                  <td colspan="5" class="px-6 py-8">
+                    <div class="text-center">
+                      <svg
+                        class="mx-auto h-12 w-12 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                        />
+                      </svg>
+                      <h3 class="mt-2 text-sm font-medium text-foreground">
+                        Tidak ada data unit kerja
+                      </h3>
+                      <p class="mt-1 text-sm text-muted-foreground">
+                        @if(request.input('search'))
+                          Tidak ditemukan unit kerja dengan kata kunci "{{ request.input('search') }}"
+                        @else
+                          Mulai dengan menambahkan unit kerja baru.
+                        @endif
+                      </p>
+                      @if(!request.input('search'))
+                        <div class="mt-6">
+                          <a
+                            href="/unit-kerja/create"
+                            class="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
+                          >
+                            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Tambah Unit Kerja
+                          </a>
                         </div>
-                      </td>
-                    </tr>
-                  @endeach
-                </tbody>
-              </table>
-            </div>
+                      @endif
+                    </div>
+                  </td>
+                </tr>
+              @endif
+            </tbody>
+          </table>
+        </div>
 
-            <!-- Pagination -->
-            @if(unitKerjas.meta && unitKerjas.meta.lastPage > 1)
-              <div class="flex items-center justify-between px-6 py-4 border-t border-border">
-                <div class="text-sm text-muted-foreground">
-                  Menampilkan {{ unitKerjas.meta.from || 1 }} - {{ unitKerjas.meta.to || 0 }} dari {{ unitKerjas.meta.total || 0 }} data
-                </div>
+        <!-- Pagination -->
+        @if(unitKerjas.length > 0)
+          <div class="bg-muted/30 px-6 py-3 border-t border-border">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div class="text-sm text-muted-foreground">
+                Menampilkan {{ ((unitKerjas.currentPage - 1) * unitKerjas.perPage) + 1 }} sampai 
+                {{ Math.min(unitKerjas.currentPage * unitKerjas.perPage, unitKerjas.total) }} dari 
+                {{ unitKerjas.total }} hasil
+              </div>
+
+              @if(unitKerjas.lastPage > 1)
                 <div class="flex items-center space-x-2">
-                  @if(unitKerjas.meta.currentPage > 1)
+                  @if(unitKerjas.currentPage > 1)
                     <a
-                      href="?page={{ unitKerjas.meta.currentPage - 1 }}"
-                      class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                      href="/unit-kerja?page={{ unitKerjas.currentPage - 1 }}{{ request.input('search') ? '&search=' + request.input('search') : '' }}"
+                      class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
                     >
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-
-                      </svg>
+                      Sebelumnya
                     </a>
                   @endif
-                      
-                  @if(unitKerjas.meta.currentPage < unitKerjas.meta.lastPage)
-                    <a
-                      href="?page={{ unitKerjas.meta.currentPage + 1 }}"
-                      class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8"
-                    >
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  
+                  <span class="text-sm text-muted-foreground">
+                    Halaman {{ unitKerjas.currentPage }} dari {{ unitKerjas.lastPage }}
+                  </span>
 
-                      </svg>
+                  @if(unitKerjas.currentPage < unitKerjas.lastPage)
+                    <a
+                      href="/unit-kerja?page={{ unitKerjas.currentPage + 1 }}{{ request.input('search') ? '&search=' + request.input('search') : '' }}"
+                      class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                      Selanjutnya
                     </a>
                   @endif
                 </div>
-              </div>
-            @endif
-          @else
-            <!-- Empty State -->
-            <div class="flex flex-col items-center justify-center py-12">
-              <div class="mx-auto h-12 w-12 text-muted-foreground">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-
-                </svg>
-              </div>
-              <h3 class="mt-4 text-lg font-semibold text-foreground">
-                Belum ada unit kerja
-              </h3>
-              <p class="mt-2 text-sm text-muted-foreground">
-                Mulai dengan menambahkan unit kerja pertama.
-              </p>
-              <a
-                href="/unit-kerjas/create"
-                class="mt-4 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-              >
-                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-
-                </svg>
-                Tambah Unit Kerja
-          </a>
+              @endif
             </div>
-          @endif
+          </div>
+        @endif
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      id="deleteModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+        <div class="flex items-center mb-4">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-lg font-medium text-foreground">
+              Konfirmasi Hapus
+            </h3>
+          </div>
+        </div>
+        <div class="mb-4">
+          <p class="text-sm text-muted-foreground">
+            Apakah Anda yakin ingin menghapus unit kerja "<span id="unitKerjaName" class="font-medium"></span>"? 
+            Tindakan ini tidak dapat dibatalkan.
+          </p>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            onclick="closeDeleteModal()"
+            class="px-4 py-2 text-sm font-medium text-muted-foreground bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
+          >
+            Batal
+          </button>
+          <form id="deleteForm" method="POST" style="display: inline;">
+            {{ csrfField() }}
+            <button
+              type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Hapus
+            </button>
+          </form>
         </div>
       </div>
     </div>
+
+    <script>
+      function confirmDelete(id, name) {
+        document.getElementById("unitKerjaName").textContent = name;
+        document.getElementById("deleteForm").action = `/unit-kerja/${id}/delete`;
+        document.getElementById("deleteModal").classList.remove("hidden");
+        document.getElementById("deleteModal").classList.add("flex");
+      }
+      
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").classList.add("hidden");
+        document.getElementById("deleteModal").classList.remove("flex");
+      }
+      // Close modal when clicking outside
+      
+      document.getElementById("deleteModal").addEventListener("click", function(e) {
+        if (e.target === this) {
+          closeDeleteModal();
+        }
+      });
+    </script>
+  @endslot
 @end
