@@ -1,0 +1,352 @@
+@layout.app({ title: jabatan.nama_jabatan + " - HR Sync" })
+  @slot('meta')
+    <meta name="description" content="Detail jabatan {{ jabatan.nama_jabatan }}" />
+  @endslot
+  
+  @slot('breadcrumb')
+    <nav class="flex" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <a
+            href="/dashboard"
+            class="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+              />
+
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+
+            </svg>
+            <a
+              href="/jabatan"
+              class="ml-1 text-sm font-medium text-muted-foreground hover:text-primary md:ml-2"
+            >Jabatan</a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+
+            </svg>
+            <span class="ml-1 text-sm font-medium text-foreground md:ml-2">{{ jabatan.nama_jabatan }}</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+  @endslot
+  
+  @slot('main')
+    <div class="max-w-7xl mx-auto space-y-6">
+      <!-- Header Section -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-foreground">
+            {{ jabatan.nama_jabatan }}
+          </h1>
+          <p class="text-muted-foreground mt-1">
+            Detail informasi jabatan
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a
+            href="/jabatan/{{ jabatan.id }}/edit"
+            class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            Edit Jabatan
+          </a>
+          <a
+            href="/jabatan"
+            class="inline-flex items-center justify-center rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
+          >
+            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Kembali
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Info Card -->
+      <div class="bg-background border rounded-lg shadow-sm overflow-hidden">
+        <div class="bg-gradient-to-r from-primary/10 to-purple-600/10 px-6 py-4 border-b">
+          <h2 class="text-lg font-semibold text-foreground">
+            Informasi Jabatan
+          </h2>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-muted-foreground">Nama Jabatan</label>
+                <p class="text-lg font-semibold text-foreground mt-1">
+                  {{ jabatan.nama_jabatan }}
+                </p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground">Tunjangan</label>
+                <p class="text-2xl font-bold text-primary mt-1">
+                  Rp {{ jabatan.tunjangan.toLocaleString('id-ID') }}
+                </p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-medium text-muted-foreground">Tanggal Dibuat</label>
+                <p class="text-base text-foreground mt-1">
+                  {{ jabatan.createdAt.toFormat('EEEE, dd MMMM yyyy', { locale: 'id' }) }}
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ jabatan.createdAt.toFormat('HH:mm') }} WIB
+                </p>
+              </div>
+              <div>
+                <label class="text-sm font-medium text-muted-foreground">Terakhir Diperbarui</label>
+                <p class="text-base text-foreground mt-1">
+                  {{ jabatan.updatedAt.toFormat('EEEE, dd MMMM yyyy', { locale: 'id' }) }}
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ jabatan.updatedAt.toFormat('HH:mm') }} WIB
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Card -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-background border rounded-lg p-6 shadow-sm">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  class="size-5 h-5 text-blue-600"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-muted-foreground">
+                Total Karyawan
+              </p>
+              <p class="text-2xl font-bold text-foreground">
+                -
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-background border rounded-lg p-6 shadow-sm">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-muted-foreground">
+                Total Tunjangan
+              </p>
+              <p class="text-lg font-bold text-foreground">
+                Rp {{ jabatan.tunjangan.toLocaleString('id-ID') }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-background border rounded-lg p-6 shadow-sm">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-muted-foreground">
+                Status
+              </p>
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+              >
+                Aktif
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions Card -->
+      <div class="bg-background border rounded-lg shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-foreground mb-4">
+          Aksi Tersedia
+        </h3>
+        <div class="flex flex-wrap gap-3">
+          <a
+            href="/jabatan/{{ jabatan.id }}/edit"
+            class="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            Edit Jabatan
+          </a>
+
+          <button
+            onclick="confirmDelete({{ jabatan.id }}, '{{ jabatan.nama_jabatan }}')"
+            class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            Hapus Jabatan
+          </button>
+
+          <a
+            href="/jabatan"
+            class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors"
+          >
+            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"
+              />
+            </svg>
+            Lihat Semua Jabatan
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Confirmation Modal -->
+    <div
+      id="deleteModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+        <div class="flex items-center mb-4">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-lg font-medium text-foreground">
+              Konfirmasi Hapus
+            </h3>
+          </div>
+        </div>
+        <div class="mb-4">
+          <p class="text-sm text-muted-foreground">
+            Apakah Anda yakin ingin menghapus jabatan "<span id="jabatanName" class="font-medium"></span>"? 
+        Tindakan ini tidak dapat dibatalkan.
+          </p>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            onclick="closeDeleteModal()"
+            class="px-4 py-2 text-sm font-medium text-muted-foreground bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
+          >
+            Batal
+      </button>
+          <form id="deleteForm" method="POST" style="display: inline;">
+            {{ csrfField() }}
+        <button
+              type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Hapus
+        </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function confirmDelete(id, name) {
+        document.getElementById("jabatanName").textContent = name;
+        // Update action URL ke route yang baru
+        document.getElementById("deleteForm").action = `/jabatan/${id}/delete`;
+        document.getElementById("deleteModal").classList.remove("hidden");
+        document.getElementById("deleteModal").classList.add("flex");
+      }
+      
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").classList.add("hidden");
+        document.getElementById("deleteModal").classList.remove("flex");
+      }
+      // Close modal when clicking outside
+      
+      document.getElementById("deleteModal").addEventListener("click", function(e) {
+        if (e.target === this) {
+          closeDeleteModal();
+        }
+      });
+    </script>
+  @endslot
+@end

@@ -1,0 +1,190 @@
+@layout.app({title: 'Unit Kerja'})
+
+  @slot('meta')
+    <meta name="description" content="A welcome page made with EdgeJS" />
+  @endslot
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight text-foreground">
+          Unit Kerja
+        </h1>
+        <p class="text-muted-foreground">
+          Kelola data unit kerja dalam organisasi
+        </p>
+      </div>
+      <a
+        href="/unit-kerjas/create"
+        class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+      >
+        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+
+        </svg>
+        Tambah Unit Kerja
+    </a>
+    </div>
+
+    <!-- Card Container -->
+    <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
+      <!-- Card Header -->
+      <div class="flex flex-col space-y-1.5 p-6 border-b border-border">
+        <h3 class="text-2xl font-semibold leading-none tracking-tight">
+          Daftar Unit Kerja
+        </h3>
+        <p class="text-sm text-muted-foreground">
+          Total: {{ unitKerjas?.meta?.total || 0 }} unit kerja
+        </p>
+      </div>
+
+      <!-- Card Content -->
+      <div class="p-0">
+        @if(unitKerjas && unitKerjas.data && unitKerjas.data.length > 0)
+          <!-- Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-border">
+                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    No
+                  </th>
+                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Nama Unit
+                  </th>
+                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Lokasi
+                  </th>
+                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @each(unitKerja in unitKerjas.data)
+                  <tr class="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td class="p-4 align-middle">
+                      {{ $loop.index + 1 }}
+                    </td>
+                    <td class="p-4 align-middle font-medium">
+                      {{ unitKerja.nama_unit }}
+                    </td>
+                    <td class="p-4 align-middle text-muted-foreground">
+                      {{ unitKerja.lokasi }}
+                    </td>
+                    <td class="p-4 align-middle">
+                      <div class="flex items-center space-x-2">
+                        <a
+                          href="/unit-kerjas/{{ unitKerja.id }}/edit"
+                          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                        >
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+
+                          </svg>
+                        </a>
+                        <form
+                          action="/unit-kerjas/{{ unitKerja.id }}"
+                          method="POST"
+                          class="inline"
+                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus unit kerja ini?')"
+                        >
+                          {{ csrfField() }}
+                          @method('DELETE')
+                            <button
+                              type="submit"
+                              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-destructive hover:text-destructive-foreground h-8 w-8"
+                            >
+                              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+
+                              </svg>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  @endeach
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            @if(unitKerjas.meta && unitKerjas.meta.lastPage > 1)
+              <div class="flex items-center justify-between px-6 py-4 border-t border-border">
+                <div class="text-sm text-muted-foreground">
+                  Menampilkan {{ unitKerjas.meta.from || 1 }} - {{ unitKerjas.meta.to || 0 }} dari {{ unitKerjas.meta.total || 0 }} data
+                </div>
+                <div class="flex items-center space-x-2">
+                  @if(unitKerjas.meta.currentPage > 1)
+                    <a
+                      href="?page={{ unitKerjas.meta.currentPage - 1 }}"
+                      class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                    >
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+
+                      </svg>
+                    </a>
+                  @endif
+                      
+                  @if(unitKerjas.meta.currentPage < unitKerjas.meta.lastPage)
+                    <a
+                      href="?page={{ unitKerjas.meta.currentPage + 1 }}"
+                      class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                    >
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+
+                      </svg>
+                    </a>
+                  @endif
+                </div>
+              </div>
+            @endif
+          @else
+            <!-- Empty State -->
+            <div class="flex flex-col items-center justify-center py-12">
+              <div class="mx-auto h-12 w-12 text-muted-foreground">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+
+                </svg>
+              </div>
+              <h3 class="mt-4 text-lg font-semibold text-foreground">
+                Belum ada unit kerja
+              </h3>
+              <p class="mt-2 text-sm text-muted-foreground">
+                Mulai dengan menambahkan unit kerja pertama.
+              </p>
+              <a
+                href="/unit-kerjas/create"
+                class="mt-4 inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+              >
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+
+                </svg>
+                Tambah Unit Kerja
+          </a>
+            </div>
+          @endif
+        </div>
+      </div>
+    </div>
+@end
