@@ -9,6 +9,7 @@
 
 const JabatanController = () => import('#controllers/jabatans_controller')
 const UnitKerjaController = () => import('#controllers/unit_kerjas_controller')
+const PegawaiController = () => import('#controllers/pegawais_controller')
 import router from '@adonisjs/core/services/router'
 
 router.on('/').render('pages/home')
@@ -29,3 +30,11 @@ router.get('/unit-kerja/:id', [UnitKerjaController, 'show']).as('unitKerja.show'
 router.get('/unit-kerja/:id/edit', [UnitKerjaController, 'edit']).as('unitKerja.edit')
 router.post('/unit-kerja/:id', [UnitKerjaController, 'update']).as('unitKerja.update')
 router.post('/unit-kerja/:id/delete', [UnitKerjaController, 'destroy']).as('unitKerja.destroy')
+
+router.get('/pegawai', [PegawaiController, 'index']).as('pegawai.index')
+router.get('/pegawai/create', [PegawaiController, 'create']).as('pegawai.create')
+router.post('/pegawai', [PegawaiController, 'store']).as('pegawai.store')
+router.get('/pegawai/:id', [PegawaiController, 'show']).as('pegawai.show')
+router.get('/pegawai/:id/edit', [PegawaiController, 'edit']).as('pegawai.edit')
+router.post('/pegawai/:id', [PegawaiController, 'update']).as('pegawai.update')
+router.post('/pegawai/:id/delete', [PegawaiController, 'destroy']).as('pegawai.destroy')
