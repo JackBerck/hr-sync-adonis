@@ -1,0 +1,762 @@
+@layout.app({ title: "Daftar Cuti - HR Sync" })
+  @slot('meta')
+    <meta name="description" content="Kelola data cuti pegawai" />
+  @endslot
+  
+  @slot('breadcrumb')
+    <nav class="flex" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <a
+            href="/dashboard"
+            class="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+              />
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-1 text-sm font-medium text-foreground md:ml-2">Cuti</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+  @endslot
+  
+  @slot('main')
+    <div class="space-y-6">
+      <!-- Flash Messages -->
+      @if(flashMessages.has('success'))
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-green-800">
+                {{ flashMessages.get('success') }}
+              </p>
+            </div>
+          </div>
+        </div>
+      @endif
+      
+      @if(flashMessages.has('error'))
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-red-800">
+                {{ flashMessages.get('error') }}
+              </p>
+            </div>
+          </div>
+        </div>
+      @endif
+      
+      <!-- Header Section -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-foreground">
+            Daftar Cuti Pegawai
+          </h1>
+          <p class="text-muted-foreground mt-1">
+            Kelola pengajuan dan riwayat cuti pegawai
+          </p>
+        </div>
+        <a
+          href="/cuti/create"
+          class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Ajukan Cuti
+        </a>
+      </div>
+
+      <!-- Advanced Search and Filter Section -->
+      <div class="bg-background border rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-medium text-foreground mb-4">
+          Pencarian & Filter
+        </h3>
+        <form method="GET" action="/cuti" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Search Input -->
+            <div class="lg:col-span-2">
+              <label for="search" class="block text-sm font-medium text-foreground mb-2">
+                Cari Pegawai
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg class="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="search"
+                  name="search"
+                  value="{{ request.input('search', '') }}"
+                  class="block w-full pl-10 pr-3 py-2 border border-input bg-background rounded-lg text-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Masukkan nama atau NIP pegawai..."
+                />
+              </div>
+            </div>
+
+            <!-- Pegawai Filter -->
+            <div>
+              <label for="pegawai_id" class="block text-sm font-medium text-foreground mb-2">
+                Pegawai
+              </label>
+              <select
+                id="pegawai_id"
+                name="pegawai_id"
+                class="block w-full px-3 py-2 border border-input bg-background rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              >
+                <option value="">
+                  Semua Pegawai
+                </option>
+                @each(pegawai in pegawais)
+                  <option value="{{ pegawai.id }}" {{ request.input('pegawai_id') == pegawai.id ? 'selected' : '' }}>
+                    {{ pegawai.nama }} ({{ pegawai.nip }})
+                  </option>
+                @endeach
+              </select>
+            </div>
+
+            <!-- Tahun Filter -->
+            <div>
+              <label for="tahun" class="block text-sm font-medium text-foreground mb-2">
+                Tahun
+              </label>
+              <select
+                id="tahun"
+                name="tahun"
+                class="block w-full px-3 py-2 border border-input bg-background rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              >
+                <option value="">
+                  Semua Tahun
+                </option>
+                @each(year in availableYears)
+                  <option value="{{ year }}" {{ request.input('tahun') == year ? 'selected' : '' }}>
+                    {{ year }}
+                  </option>
+                @endeach
+              </select>
+            </div>
+          </div>
+
+          <!-- Filter Actions -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            >
+              <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              Terapkan Filter
+            </button>
+
+            @if(request.input('search') || request.input('pegawai_id') || request.input('tahun'))
+              <a
+                href="/cuti"
+                class="inline-flex items-center justify-center rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
+              >
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Reset Filter
+              </a>
+            @endif
+          </div>
+
+          <!-- Active Filters Display -->
+          @if(request.input('search') || request.input('pegawai_id') || request.input('tahun'))
+            <div class="flex flex-wrap items-center gap-2 pt-3 border-t">
+              <span class="text-sm text-muted-foreground">Filter aktif:</span>
+
+              @if(request.input('search'))
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                >
+                  Search: {{ request.input('search') }}
+                </span>
+              @endif
+              
+              @if(request.input('pegawai_id'))
+                @each(pegawai in pegawais)
+                  @if(pegawai.id == request.input('pegawai_id'))
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                    >
+                      Pegawai: {{ pegawai.nama }}
+                    </span>
+                  @endif
+                @endeach
+              @endif
+                
+              @if(request.input('tahun'))
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                >
+                  Tahun: {{ request.input('tahun') }}
+                </span>
+              @endif
+            </div>
+          @endif
+        </form>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-background border rounded-lg p-6 shadow-sm">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-muted-foreground">
+                Total Cuti
+              </p>
+              <p class="text-2xl font-bold text-foreground">
+                {{ cutis.total }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-background border rounded-lg p-6 shadow-sm">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-muted-foreground">
+                Pegawai Aktif
+              </p>
+              <p class="text-2xl font-bold text-foreground">
+                {{ pegawais.length }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-background border rounded-lg p-6 shadow-sm">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-muted-foreground">
+                Tahun Tersedia
+              </p>
+              <p class="text-2xl font-bold text-foreground">
+                {{ availableYears.length }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-background border rounded-lg p-6 shadow-sm">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-muted-foreground">
+                Hasil Filter
+              </p>
+              <p class="text-2xl font-bold text-foreground">
+                {{ cutis.data.length }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Section -->
+      <div class="bg-background border rounded-lg shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-border">
+            <thead class="bg-muted/50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  No
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Pegawai
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Periode Cuti
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Durasi
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Alasan
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Status
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Aksi
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-background divide-y divide-border">
+              @if(cutis.data.length > 0)
+                @each((cuti, index) in cutis.data)
+                  <tr
+                    class="hover:bg-muted/30 transition-colors"
+                    data-tanggal-mulai="{{ cuti.tanggalMulaiFormatted }}"
+                    data-tanggal-akhir="{{ cuti.tanggalAkhirFormatted }}"
+                  >
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                      {{ ((cutis.currentPage - 1) * cutis.perPage) + index + 1 }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                          <div
+                            class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center"
+                          >
+                            <span class="text-sm font-medium text-white">
+                              {{ cuti.pegawai.nama.charAt(0).toUpperCase() }}
+                            </span>
+                          </div>
+                        </div>
+                        <div class="ml-4">
+                          <div class="text-sm font-medium text-foreground">
+                            {{ cuti.pegawai.nama }}
+                          </div>
+                          <div class="text-sm text-muted-foreground">
+                            {{ cuti.pegawai.nip }} • {{ cuti.pegawai.jabatan.nama_jabatan }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <div class="text-sm font-medium text-foreground" id="periode-{{ cuti.id }}">
+                          <!-- Will be populated by JavaScript -->
+                        </div>
+                        <div class="text-sm text-muted-foreground" id="hari-{{ cuti.id }}">
+                          <!-- Will be populated by JavaScript -->
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                      >
+                        {{ cuti.duration }} hari
+                      </span>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="text-sm text-foreground max-w-xs truncate" title="{{ cuti.alasan }}">
+                        {{ cuti.alasan }}
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      @if(cuti.isUpcoming)
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                        >
+                          <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          Akan Datang
+                        </span>
+                      @elseif(cuti.isOngoing)
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                        >
+                          <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          Sedang Cuti
+                        </span>
+                      @else
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                        >
+                          <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                          Selesai
+                        </span>
+                      @endif
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div class="flex items-center justify-end space-x-2">
+                        <a
+                          href="/cuti/{{ cuti.id }}"
+                          class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                          title="Lihat Detail"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-4"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                            />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                          </svg>
+                        </a>
+                        @if(cuti.isUpcoming)
+                          <a
+                            href="/cuti/{{ cuti.id }}/edit"
+                            class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                            title="Edit"
+                          >
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                              />
+                            </svg>
+                          </a>
+                          <button
+                            onclick="confirmDelete({{ cuti.id }}, '{{ cuti.pegawai.nama }}', this.closest('tr'))"
+                            class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-colors"
+                            title="Hapus"
+                          >
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
+                        @else
+                          <span
+                            class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground/50 cursor-not-allowed"
+                            title="Tidak dapat diedit"
+                          >
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"
+                              />
+                            </svg>
+                          </span>
+                        @endif
+                      </div>
+                    </td>
+                  </tr>
+                @endeach
+              @else
+                <tr>
+                  <td colspan="7" class="px-6 py-8">
+                    <div class="text-center">
+                      <svg
+                        class="mx-auto h-12 w-12 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <h3 class="mt-2 text-sm font-medium text-foreground">
+                        Tidak ada data cuti
+                      </h3>
+                      <p class="mt-1 text-sm text-muted-foreground">
+                        @if(request.input('search') || request.input('pegawai_id') || request.input('tahun'))
+                          Tidak ditemukan data cuti dengan kriteria filter yang dipilih.
+                        @else
+                          Mulai dengan mengajukan cuti baru.
+                        @endif
+                      </p>
+                      @if(!request.input('search') && !request.input('pegawai_id') && !request.input('tahun'))
+                        <div class="mt-6">
+                          <a
+                            href="/cuti/create"
+                            class="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
+                          >
+                            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Ajukan Cuti
+                          </a>
+                        </div>
+                      @endif
+                    </div>
+                  </td>
+                </tr>
+              @endif
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if(cutis.data.length > 0)
+          <div class="bg-muted/30 px-6 py-3 border-t border-border">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div class="text-sm text-muted-foreground">
+                Menampilkan {{ ((cutis.currentPage - 1) * cutis.perPage) + 1 }} sampai 
+                {{ cutis.currentPage * cutis.perPage > cutis.total ? cutis.total : cutis.currentPage * cutis.perPage }} dari 
+                {{ cutis.total }} hasil
+              </div>
+
+              @if(cutis.lastPage > 1)
+                <div class="flex items-center space-x-2">
+                  @if(cutis.currentPage > 1)
+                    @set('prevUrl', '/cuti?page=' + (cutis.currentPage - 1))
+                      @if(request.input('search'))
+                        @set('prevUrl', prevUrl + '&search=' + request.input('search'))
+                        @endif
+                        @if(request.input('pegawai_id'))
+                          @set('prevUrl', prevUrl + '&pegawai_id=' + request.input('pegawai_id'))
+                          @endif
+                          @if(request.input('tahun'))
+                            @set('prevUrl', prevUrl + '&tahun=' + request.input('tahun'))
+                            @endif
+                            <a
+                              href="{{ prevUrl }}"
+                              class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
+                            >
+                              Sebelumnya
+                    </a>
+                          @endif
+                          
+                          <span class="text-sm text-muted-foreground">
+                            Halaman {{ cutis.currentPage }} dari {{ cutis.lastPage }}
+                  </span>
+
+                          @if(cutis.currentPage < cutis.lastPage)
+                            @set('nextUrl', '/cuti?page=' + (cutis.currentPage + 1))
+                              @if(request.input('search'))
+                                @set('nextUrl', nextUrl + '&search=' + request.input('search'))
+                                @endif
+                                @if(request.input('pegawai_id'))
+                                  @set('nextUrl', nextUrl + '&pegawai_id=' + request.input('pegawai_id'))
+                                  @endif
+                                  @if(request.input('tahun'))
+                                    @set('nextUrl', nextUrl + '&tahun=' + request.input('tahun'))
+                                    @endif
+                                    <a
+                                      href="{{ nextUrl }}"
+                                      class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
+                                    >
+                                      Selanjutnya
+                    </a>
+                                  @endif
+                                </div>
+                              @endif
+                            </div>
+                          </div>
+                        @endif
+                      </div>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div
+                      id="deleteModal"
+                      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+                    >
+                      <div class="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+                        <div class="flex items-center mb-4">
+                          <div class="flex-shrink-0">
+                            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+                              />
+                            </svg>
+                          </div>
+                          <div class="ml-3">
+                            <h3 class="text-lg font-medium text-foreground">
+                              Konfirmasi Hapus Cuti
+                            </h3>
+                          </div>
+                        </div>
+                        <div class="mb-4">
+                          <p class="text-sm text-muted-foreground">
+                            Apakah Anda yakin ingin menghapus cuti "<span id="cutiDetails" class="font-medium"></span>"? 
+            Kuota cuti akan dikembalikan. Tindakan ini tidak dapat dibatalkan.
+                          </p>
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                          <button
+                            onclick="closeDeleteModal()"
+                            class="px-4 py-2 text-sm font-medium text-muted-foreground bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
+                          >
+                            Batal
+          </button>
+                          <form id="deleteForm" method="POST" style="display: inline;">
+                            {{ csrfField() }}
+            <button
+                              type="submit"
+                              class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                            >
+                              Hapus Cuti
+            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                    <script>
+                      // Format dates on page load
+                      document.addEventListener("DOMContentLoaded", function() {
+                        const rows = document.querySelectorAll("tr[data-tanggal-mulai]");
+                        rows.forEach(row => {
+                          const tanggalMulaiStr = row.dataset.tanggalMulai;
+                          const tanggalAkhirStr = row.dataset.tanggalAkhir;
+                          // Find cuti ID from view link
+                          const viewLink = row.querySelector('a[href*="/cuti/"]');
+                          if (!viewLink) return;
+                          const cutiId = viewLink.href.split("/").pop();
+                          if (tanggalMulaiStr && tanggalAkhirStr && cutiId) {
+                            const tanggalMulai = new Date(tanggalMulaiStr);
+                            const tanggalAkhir = new Date(tanggalAkhirStr);
+                            // Format periode
+                            const periodeEl = document.getElementById(`periode-${cutiId}`);
+                            if (periodeEl) {
+                              periodeEl.textContent = new Intl.DateTimeFormat("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric"
+                              }).format(tanggalMulai) + " - " + new Intl.DateTimeFormat("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric"
+                              }).format(tanggalAkhir);
+                            }
+                            // Format hari
+                            const hariEl = document.getElementById(`hari-${cutiId}`);
+                            if (hariEl) {
+                              hariEl.textContent = new Intl.DateTimeFormat("id-ID", {
+                                weekday: "long"
+                              }).format(tanggalMulai) + " - " + new Intl.DateTimeFormat("id-ID", {
+                                weekday: "long"
+                              }).format(tanggalAkhir);
+                            }
+                          }
+                        });
+                      });
+                      
+                      function confirmDelete(id, nama, rowElement) {
+                        const tanggalMulaiStr = rowElement.dataset.tanggalMulai;
+                        const tanggal = tanggalMulaiStr ? new Intl.DateTimeFormat("id-ID").format(new Date(tanggalMulaiStr)) : "";
+                        document.getElementById("cutiDetails").textContent = `${nama} - ${tanggal}`;
+                        document.getElementById("deleteForm").action = `/cuti/${id}/delete`;
+                        document.getElementById("deleteModal").classList.remove("hidden");
+                        document.getElementById("deleteModal").classList.add("flex");
+                      }
+                      
+                      function closeDeleteModal() {
+                        document.getElementById("deleteModal").classList.add("hidden");
+                        document.getElementById("deleteModal").classList.remove("flex");
+                      }
+                      // Close modal when clicking outside
+                      
+                      document.getElementById("deleteModal").addEventListener("click", function(e) {
+                        if (e.target === this) {
+                          closeDeleteModal();
+                        }
+                      });
+                    </script>
+                  @endslot
+                @end

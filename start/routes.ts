@@ -10,6 +10,7 @@
 const JabatanController = () => import('#controllers/jabatans_controller')
 const UnitKerjaController = () => import('#controllers/unit_kerjas_controller')
 const PegawaiController = () => import('#controllers/pegawais_controller')
+const CutiController = () => import('#controllers/cutis_controller')
 import router from '@adonisjs/core/services/router'
 
 router.on('/').render('pages/home')
@@ -38,3 +39,15 @@ router.get('/pegawai/:id', [PegawaiController, 'show']).as('pegawai.show')
 router.get('/pegawai/:id/edit', [PegawaiController, 'edit']).as('pegawai.edit')
 router.post('/pegawai/:id', [PegawaiController, 'update']).as('pegawai.update')
 router.post('/pegawai/:id/delete', [PegawaiController, 'destroy']).as('pegawai.destroy')
+
+// Cuti routes
+router.get('/cuti', [CutiController, 'index']).as('cuti.index')
+router.get('/cuti/create', [CutiController, 'create']).as('cuti.create')
+router.post('/cuti', [CutiController, 'store']).as('cuti.store')
+router.get('/cuti/:id', [CutiController, 'show']).as('cuti.show')
+router.get('/cuti/:id/edit', [CutiController, 'edit']).as('cuti.edit')
+router.post('/cuti/:id', [CutiController, 'update']).as('cuti.update')
+router.post('/cuti/:id/delete', [CutiController, 'destroy']).as('cuti.destroy')
+
+// Helper route for cuti summary
+router.get('/api/cuti/summary/:pegawaiId/:tahun', [CutiController, 'getSummary']).as('cuti.summary')

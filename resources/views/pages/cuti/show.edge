@@ -1,0 +1,822 @@
+@layout.app({ title: "Detail Cuti - HR Sync" })
+  @slot('meta')
+    <meta name="description" content="Detail pengajuan cuti pegawai" />
+  @endslot
+  
+  @slot('breadcrumb')
+    <nav class="flex" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <a
+            href="/dashboard"
+            class="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+              />
+
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+
+            </svg>
+            <a href="/cuti" class="ml-1 text-sm font-medium text-muted-foreground hover:text-primary md:ml-2">Cuti</a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+
+            </svg>
+            <span class="ml-1 text-sm font-medium text-foreground md:ml-2">Detail Cuti {{ cuti.pegawai.nama }}</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+  @endslot
+  
+  @slot('main')
+    <div class="space-y-6">
+      <!-- Flash Messages -->
+      @if(flashMessages.has('success'))
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-green-800">
+                {{ flashMessages.get('success') }}
+              </p>
+            </div>
+          </div>
+        </div>
+      @endif
+      
+      @if(flashMessages.has('error'))
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-red-800">
+                {{ flashMessages.get('error') }}
+              </p>
+            </div>
+          </div>
+        </div>
+      @endif
+      
+      <!-- Header Section with Status -->
+      <div class="bg-background border rounded-lg p-6 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0">
+              <div
+                class="h-16 w-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center"
+              >
+                <span class="text-xl font-bold text-white">
+                  {{ cuti.pegawai.nama.charAt(0).toUpperCase() }}
+                </span>
+              </div>
+            </div>
+            <div class="flex-1">
+              <h1 class="text-2xl font-bold text-foreground">
+                Cuti {{ cuti.pegawai.nama }}
+              </h1>
+              <p class="text-muted-foreground mt-1">
+                {{ cuti.pegawai.nip }} • {{ cuti.pegawai.jabatan.nama_jabatan }} • {{ cuti.pegawai.unitKerja.nama_unit }}
+              </p>
+              <div
+                class="flex items-center space-x-4 mt-3"
+                data-tanggal-mulai="{{ cuti.tanggalMulaiFormatted }}"
+                data-tanggal-akhir="{{ cuti.tanggalAkhirFormatted }}"
+              >
+                <!-- Status badges will be populated by JavaScript -->
+                <span id="statusBadge"></span>
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                >
+                  <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  {{ duration }} Hari
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div id="actionButtons">
+              <!-- Action buttons will be populated by JavaScript -->
+            </div>
+
+            <a
+              href="/cuti"
+              class="inline-flex items-center justify-center rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
+            >
+              <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Kembali
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Detail Cuti -->
+          <div class="bg-background border rounded-lg p-6 shadow-sm">
+            <h2 class="text-lg font-semibold text-foreground mb-4">
+              Detail Pengajuan Cuti
+            </h2>
+
+            <div class="space-y-6">
+              <!-- Period Info -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-muted-foreground mb-1">Tanggal Mulai</label>
+                    <div class="flex items-center space-x-2">
+                      <svg class="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <div>
+                        <p class="text-sm font-medium text-foreground" id="tanggalMulaiDisplay">
+                          <!-- Will be populated by JavaScript -->
+                        </p>
+                        <p class="text-xs text-muted-foreground" id="hariMulaiDisplay">
+                          <!-- Will be populated by JavaScript -->
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-muted-foreground mb-1">Tanggal Akhir</label>
+                    <div class="flex items-center space-x-2">
+                      <svg class="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <div>
+                        <p class="text-sm font-medium text-foreground" id="tanggalAkhirDisplay">
+                          <!-- Will be populated by JavaScript -->
+                        </p>
+                        <p class="text-xs text-muted-foreground" id="hariAkhirDisplay">
+                          <!-- Will be populated by JavaScript -->
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-muted-foreground mb-1">Durasi Cuti</label>
+                    <div class="flex items-center space-x-2">
+                      <svg class="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <div>
+                        <p class="text-lg font-bold text-foreground">
+                          {{ duration }} Hari
+                        </p>
+                        <p class="text-xs text-muted-foreground">
+                          @if(duration === 1)
+                            Cuti sehari
+                          @elseif(duration <= 3)
+                            Cuti pendek
+                          @elseif(duration <= 7)
+                            Cuti sedang
+                          @else
+                            Cuti panjang
+                          @endif
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="countdownSection">
+                    <!-- Countdown will be populated by JavaScript -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Alasan -->
+              <div>
+                <label class="block text-sm font-medium text-muted-foreground mb-2">Alasan Cuti</label>
+                <div class="bg-muted/30 border rounded-lg p-4">
+                  <p class="text-sm text-foreground">
+                    {{ cuti.alasan }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Timeline -->
+              <div>
+                <label class="block text-sm font-medium text-muted-foreground mb-3">Timeline Cuti</label>
+                <div class="space-y-4">
+                  <!-- Timeline Item 1: Pengajuan -->
+                  <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0">
+                      <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-sm font-medium text-foreground">
+                        Cuti diajukan
+                      </p>
+                      <p class="text-xs text-muted-foreground" id="createdAtDisplay">
+                        <!-- Will be populated by JavaScript -->
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Timeline Item 2: Status Current -->
+                  <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0" id="timelineIcon">
+                      <!-- Timeline icon will be populated by JavaScript -->
+                    </div>
+                    <div class="flex-1" id="timelineStatus">
+                      <!-- Timeline status will be populated by JavaScript -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informasi Pegawai -->
+          <div class="bg-background border rounded-lg p-6 shadow-sm">
+            <h2 class="text-lg font-semibold text-foreground mb-4">
+              Informasi Pegawai
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-muted-foreground mb-1">Nama Lengkap</label>
+                  <p class="text-sm font-medium text-foreground">
+                    {{ cuti.pegawai.nama }}
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-muted-foreground mb-1">NIP</label>
+                  <p class="text-sm font-medium text-foreground">
+                    {{ cuti.pegawai.nip }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-muted-foreground mb-1">Jabatan</label>
+                  <p class="text-sm font-medium text-foreground">
+                    {{ cuti.pegawai.jabatan.nama_jabatan }}
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-muted-foreground mb-1">Unit Kerja</label>
+                  <p class="text-sm font-medium text-foreground">
+                    {{ cuti.pegawai.unitKerja.nama_unit }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Quota Summary -->
+          <div class="bg-background border rounded-lg p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-foreground mb-4">
+              Ringkasan Kuota {{ year }}
+            </h3>
+
+            <div class="space-y-4">
+              <!-- Progress Bar -->
+              <div>
+                <div class="flex justify-between text-sm mb-2">
+                  <span class="text-muted-foreground">Kuota Terpakai</span>
+                  <span class="font-medium text-foreground">{{ totalUsedDaysThisYear }}/12 hari</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    class=h-2
+                    rounded-full
+                    transition-all
+                    style="width: {{ progressPercentage }}%"
+                    {{ totalUsedDaysThisYear <= 8 ? 'bg-green-500' : totalUsedDaysThisYear <= 10 ? 'bg-yellow-500' : 'bg-red-500' }}
+                  >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="grid grid-cols-2 gap-4">
+                <div class="text-center p-3 bg-green-50 rounded-lg">
+                  <p class="text-2xl font-bold text-green-600">
+                    {{ remainingQuota }}
+                  </p>
+                  <p class="text-xs text-muted-foreground">
+                    Sisa Kuota
+                  </p>
+                </div>
+                <div class="text-center p-3 bg-blue-50 rounded-lg">
+                  <p class="text-2xl font-bold text-blue-600">
+                    {{ totalUsedDaysThisYear }}
+                  </p>
+                  <p class="text-xs text-muted-foreground">
+                    Terpakai
+                  </p>
+                </div>
+              </div>
+
+              <!-- Status Info -->
+              <div class="pt-2 border-t">
+                @if(remainingQuota <= 2)
+                  <div class="flex items-center space-x-2 text-red-600">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
+                    </svg>
+                    <span class="text-xs font-medium">Kuota hampir habis</span>
+                  </div>
+                @elseif(remainingQuota <= 5)
+                  <div class="flex items-center space-x-2 text-yellow-600">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span class="text-xs font-medium">Kuota terbatas</span>
+                  </div>
+                @else
+                  <div class="flex items-center space-x-2 text-green-600">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span class="text-xs font-medium">Kuota masih tersedia</span>
+                  </div>
+                @endif
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="bg-background border rounded-lg p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-foreground mb-4">
+              Aksi Cepat
+            </h3>
+
+            <div class="space-y-3">
+              <button
+                class="w-full inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-red-600/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+                Hapus Cuti
+              </button>
+
+              <a
+                href="/cuti/create"
+                class="w-full inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Ajukan Cuti Baru
+              </a>
+
+              <a
+                href="/cuti?pegawai_id={{ cuti.pegawaiId }}"
+                class="w-full inline-flex items-center justify-center rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2"
+              >
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+                Riwayat Cuti
+              </a>
+
+              <a
+                href="/cuti?tahun={{ year }}"
+                class="w-full inline-flex items-center justify-center rounded-lg bg-muted px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-muted focus:ring-offset-2"
+              >
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                Cuti Tahun {{ year }}
+              </a>
+            </div>
+          </div>
+
+          <!-- Info Card -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">
+                  Informasi
+                </h3>
+                <div class="mt-2 text-sm text-blue-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <li>
+                      Cuti dapat diedit sebelum tanggal mulai
+                    </li>
+                    <li>
+                      Quota cuti direset setiap tahun
+                    </li>
+                    <li>
+                      Maksimal 12 hari cuti per tahun
+                    </li>
+                    <li>
+                      Riwayat cuti dapat dilihat kapan saja
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      id="deleteModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+        <div class="flex items-center mb-4">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-lg font-medium text-foreground">
+              Konfirmasi Hapus Cuti
+            </h3>
+          </div>
+        </div>
+        <div class="mb-4">
+          <p class="text-sm text-muted-foreground">
+            Apakah Anda yakin ingin menghapus cuti "<span id="cutiDetails" class="font-medium"></span>"? 
+            Kuota cuti ({{ duration }} hari) akan dikembalikan. Tindakan ini tidak dapat dibatalkan.
+          </p>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            onclick="closeDeleteModal()"
+            class="px-4 py-2 text-sm font-medium text-muted-foreground bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
+          >
+            Batal
+          </button>
+          <form id="deleteForm" method="POST" style="display: inline;">
+            {{ csrfField() }}
+            <button
+              type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Hapus Cuti
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const cutiId = {{ cuti.id }};
+      
+      const pegawaiNama = "{{ cuti.pegawai.nama }}";
+      
+      const tanggalMulaiStr = "{{ cuti.tanggalMulaiFormatted }}";
+      
+      const tanggalAkhirStr = "{{ cuti.tanggalAkhirFormatted }}";
+      
+      const createdAtStr = "{{ cuti.createdAtFormatted }}";
+      
+      const tanggalMulai = new Date(tanggalMulaiStr);
+      
+      const tanggalAkhir = new Date(tanggalAkhirStr);
+      
+      const createdAt = new Date(createdAtStr);
+      
+      const today = new Date();
+      
+      const isUpcoming = tanggalMulai > today;
+      
+      const isOngoing = tanggalMulai <= today && tanggalAkhir >= today;
+      
+      const isCompleted = tanggalAkhir < today;
+      
+      const formatDate = date => {
+        return new Intl.DateTimeFormat("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric"
+        }).format(date);
+      };
+      
+      const formatDateTime = date => {
+        return new Intl.DateTimeFormat("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        }).format(date);
+      };
+      
+      const formatDay = date => {
+        return new Intl.DateTimeFormat("id-ID", {
+          weekday: "long"
+        }).format(date);
+      };
+      
+      document.getElementById("tanggalMulaiDisplay").textContent = formatDate(tanggalMulai);
+      
+      document.getElementById("hariMulaiDisplay").textContent = formatDay(tanggalMulai);
+      
+      document.getElementById("tanggalAkhirDisplay").textContent = formatDate(tanggalAkhir);
+      
+      document.getElementById("hariAkhirDisplay").textContent = formatDay(tanggalAkhir);
+      
+      document.getElementById("createdAtDisplay").textContent = formatDateTime(createdAt);
+      
+      const statusBadge = document.getElementById("statusBadge");
+      
+      if (isUpcoming) {
+        statusBadge.innerHTML = `
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                          </svg>
+                                          Akan Datang
+                                        </span>
+                                      `;
+      } else if (isOngoing) {
+        statusBadge.innerHTML = `
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                          </svg>
+                                          Sedang Cuti
+                                        </span>
+                                      `;
+      } else {
+        statusBadge.innerHTML = `
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                          </svg>
+                                          Selesai
+                                        </span>
+                                      `;
+      }
+      // Action buttons
+      
+      const actionButtons = document.getElementById("actionButtons");
+      
+      if (isUpcoming) {
+        actionButtons.innerHTML = `
+                                        <a
+                                          href="/cuti/${cutiId}/edit"
+                                          class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                        >
+                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                          </svg>
+                                          Edit Cuti
+                                        </a>
+                                        <button
+                                          onclick="confirmDelete(${cutiId}, '${pegawaiNama}', '${formatDate(tanggalMulai)}')"
+                                          class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                        >
+                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                          </svg>
+                                          Hapus
+                                        </button>
+                                      `;
+      }
+      // Countdown section
+      
+      const countdownSection = document.getElementById("countdownSection");
+      
+      if (isUpcoming) {
+        const daysUntil = Math.ceil((tanggalMulai.getTime() - today.getTime()) / (1e3 * 60 * 60 * 24));
+        countdownSection.innerHTML = `
+                                        <div>
+                                          <label class="block text-sm font-medium text-muted-foreground mb-1">Mulai Dalam</label>
+                                          <div class="flex items-center space-x-2">
+                                            <svg class="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <div>
+                                              <p class="text-lg font-bold text-yellow-600">${daysUntil} Hari</p>
+                                              <p class="text-xs text-muted-foreground">Lagi</p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      `;
+      } else if (isOngoing) {
+        const daysLeft = Math.ceil((tanggalAkhir.getTime() - today.getTime()) / (1e3 * 60 * 60 * 24));
+        countdownSection.innerHTML = `
+                                        <div>
+                                          <label class="block text-sm font-medium text-muted-foreground mb-1">Sisa Cuti</label>
+                                          <div class="flex items-center space-x-2">
+                                            <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <div>
+                                              <p class="text-lg font-bold text-green-600">${daysLeft} Hari</p>
+                                              <p class="text-xs text-muted-foreground">Lagi</p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      `;
+      } else {
+        const daysAgo = Math.ceil((today.getTime() - tanggalAkhir.getTime()) / (1e3 * 60 * 60 * 24));
+        countdownSection.innerHTML = `
+                                        <div>
+                                          <label class="block text-sm font-medium text-muted-foreground mb-1">Selesai</label>
+                                          <div class="flex items-center space-x-2">
+                                            <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            <div>
+                                              <p class="text-lg font-bold text-gray-600">${daysAgo} Hari</p>
+                                              <p class="text-xs text-muted-foreground">Yang lalu</p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      `;
+      }
+      // Timeline
+      
+      const timelineIcon = document.getElementById("timelineIcon");
+      
+      const timelineStatus = document.getElementById("timelineStatus");
+      
+      if (isUpcoming) {
+        timelineIcon.innerHTML = `
+                                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                          <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                          </svg>
+                                        </div>
+                                      `;
+        timelineStatus.innerHTML = `
+                                        <p class="text-sm font-medium text-foreground">Menunggu mulai cuti</p>
+                                        <p class="text-xs text-muted-foreground">Cuti akan dimulai ${formatDate(tanggalMulai)}</p>
+                                      `;
+      } else if (isOngoing) {
+        timelineIcon.innerHTML = `
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                          <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                          </svg>
+                                        </div>
+                                      `;
+        timelineStatus.innerHTML = `
+                                        <p class="text-sm font-medium text-foreground">Sedang dalam masa cuti</p>
+                                        <p class="text-xs text-muted-foreground">Dimulai ${formatDate(tanggalMulai)}, berakhir ${formatDate(tanggalAkhir)}</p>
+                                      `;
+      } else {
+        timelineIcon.innerHTML = `
+                                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                          </svg>
+                                        </div>
+                                      `;
+        timelineStatus.innerHTML = `
+                                        <p class="text-sm font-medium text-foreground">Cuti telah selesai</p>
+                                        <p class="text-xs text-muted-foreground">Selesai pada ${formatDate(tanggalAkhir)}</p>
+                                      `;
+      }
+      // Delete modal functions
+      
+      function confirmDelete(id, nama, tanggal) {
+        document.getElementById("cutiDetails").textContent = `${nama} - ${tanggal}`;
+        document.getElementById("deleteForm").action = `/cuti/${id}/delete`;
+        document.getElementById("deleteModal").classList.remove("hidden");
+        document.getElementById("deleteModal").classList.add("flex");
+      }
+      
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").classList.add("hidden");
+        document.getElementById("deleteModal").classList.remove("flex");
+      }
+      // Close modal when clicking outside
+      
+      document.getElementById("deleteModal").addEventListener("click", function(e) {
+        if (e.target === this) {
+          closeDeleteModal();
+        }
+      });
+    </script>
+  @endslot
+@end
