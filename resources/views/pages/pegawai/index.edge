@@ -166,7 +166,7 @@
                 <option value="">
                   Semua Jabatan
                 </option>
-                @each(jabatan in jabatans)
+                @each(jabatan in pegawais)
                   <option value="{{ jabatan.id }}" {{ request.input('jabatan_id') == jabatan.id ? 'selected' : '' }}>
                     {{ jabatan.nama_jabatan }}
                   </option>
@@ -246,7 +246,7 @@
                 @endif
                 
                 @if(request.input('jabatan_id'))
-                  @set('selectedJabatan', jabatans.find(j => j.id == request.input('jabatan_id')))
+                  @set('selectedJabatan', pegawais.find(j => j.id == request.input('jabatan_id')))
                     @if(selectedJabatan)
                       <span
                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
@@ -357,7 +357,7 @@
                     Jabatan
                   </p>
                   <p class="text-2xl font-bold text-foreground">
-                    {{ jabatans.length }}
+                    {{ pegawais.length }}
                   </p>
                 </div>
               </div>
@@ -594,122 +594,102 @@
                   @if(pegawais.lastPage > 1)
                     <div class="flex items-center space-x-2">
                       @if(pegawais.currentPage > 1)
-                        @set('prevUrl', `/pegawai?page=${pegawais.currentPage - 1}`)
-                          @if(request.input('search'))
-                            @set('prevUrl', prevUrl + '&search=' + request.input('search'))
-                            @endif
-                            @if(request.input('unit_kerja_id'))
-                              @set('prevUrl', prevUrl + '&unit_kerja_id=' + request.input('unit_kerja_id'))
-                              @endif
-                              @if(request.input('jabatan_id'))
-                                @set('prevUrl', prevUrl + '&jabatan_id=' + request.input('jabatan_id'))
-                                @endif
-                                <a
-                                  href="{{ prevUrl }}"
-                                  class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
-                                >
-                                  Sebelumnya
+                        <a
+                          href="/jabatan?page={{ pegawais.currentPage - 1 }}{{ request.input('search') ? '&search=' + request.input('search') : '' }}"
+                          class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
+                        >
+                          Sebelumnya
                     </a>
-                              @endif
-                              
-                              <span class="text-sm text-muted-foreground">
-                                Halaman {{ pegawais.currentPage }} dari {{ pegawais.lastPage }}
+                      @endif
+                      
+                      <span class="text-sm text-muted-foreground">
+                        Halaman {{ pegawais.currentPage }} dari {{ pegawais.lastPage }}
                   </span>
 
-                              @if(pegawais.currentPage < pegawais.lastPage)
-                                @set('nextUrl', `/pegawai?page=${pegawais.currentPage + 1}`)
-                                  @if(request.input('search'))
-                                    @set('nextUrl', nextUrl + '&search=' + request.input('search'))
-                                    @endif
-                                    @if(request.input('unit_kerja_id'))
-                                      @set('nextUrl', nextUrl + '&unit_kerja_id=' + request.input('unit_kerja_id'))
-                                      @endif
-                                      @if(request.input('jabatan_id'))
-                                        @set('nextUrl', nextUrl + '&jabatan_id=' + request.input('jabatan_id'))
-                                        @endif
-                                        <a
-                                          href="{{ nextUrl }}"
-                                          class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
-                                        >
-                                          Selanjutnya
-                    </a>
-                                      @endif
-                                    </div>
-                                  @endif
-                                </div>
-                              </div>
-                            @endif
-                          </div>
-                        </div>
-
-                        <!-- Delete Confirmation Modal -->
-                        <div
-                          id="deleteModal"
-                          class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+                      @if(pegawais.currentPage < pegawais.lastPage)
+                        <a
+                          href="/jabatan?page={{ pegawais.currentPage + 1 }}{{ request.input('search') ? '&search=' + request.input('search') : '' }}"
+                          class="inline-flex items-center px-3 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
                         >
-                          <div class="bg-background rounded-lg p-6 max-w-md w-full mx-4">
-                            <div class="flex items-center mb-4">
-                              <div class="flex-shrink-0">
-                                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
-                                  />
-                                </svg>
-                              </div>
-                              <div class="ml-3">
-                                <h3 class="text-lg font-medium text-foreground">
-                                  Konfirmasi Hapus
-                                </h3>
-                              </div>
-                            </div>
-                            <div class="mb-4">
-                              <p class="text-sm text-muted-foreground">
-                                Apakah Anda yakin ingin menghapus pegawai "<span id="pegawaiName" class="font-medium"></span>"? 
-            Tindakan ini tidak dapat dibatalkan.
-                              </p>
-                            </div>
-                            <div class="flex justify-end space-x-3">
-                              <button
-                                onclick="closeDeleteModal()"
-                                class="px-4 py-2 text-sm font-medium text-muted-foreground bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
-                              >
-                                Batal
-          </button>
-                              <form id="deleteForm" method="POST" style="display: inline;">
-                                {{ csrfField() }}
-            <button
-                                  type="submit"
-                                  class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                                >
-                                  Hapus
-            </button>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
+                          Selanjutnya
+                    </a>
+                      @endif
+                    </div>
+                  @endif
+                </div>
+              </div>
+            @endif
+          </div>
+        </div>
 
-                        <script>
-                          function confirmDelete(id, name) {
-                            document.getElementById("pegawaiName").textContent = name;
-                            document.getElementById("deleteForm").action = `/pegawai/${id}/delete`;
-                            document.getElementById("deleteModal").classList.remove("hidden");
-                            document.getElementById("deleteModal").classList.add("flex");
-                          }
-                          
-                          function closeDeleteModal() {
-                            document.getElementById("deleteModal").classList.add("hidden");
-                            document.getElementById("deleteModal").classList.remove("flex");
-                          }
-                          // Close modal when clicking outside
-                          
-                          document.getElementById("deleteModal").addEventListener("click", function(e) {
-                            if (e.target === this) {
-                              closeDeleteModal();
-                            }
-                          });
-                        </script>
-                      @endslot
-                    @end
+        <!-- Delete Confirmation Modal -->
+        <div
+          id="deleteModal"
+          class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+        >
+          <div class="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex items-center mb-4">
+              <div class="flex-shrink-0">
+                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.68 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-lg font-medium text-foreground">
+                  Konfirmasi Hapus
+                </h3>
+              </div>
+            </div>
+            <div class="mb-4">
+              <p class="text-sm text-muted-foreground">
+                Apakah Anda yakin ingin menghapus pegawai "<span id="pegawaiName" class="font-medium"></span>"? 
+            Tindakan ini tidak dapat dibatalkan.
+              </p>
+            </div>
+            <div class="flex justify-end space-x-3">
+              <button
+                onclick="closeDeleteModal()"
+                class="px-4 py-2 text-sm font-medium text-muted-foreground bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
+              >
+                Batal
+          </button>
+              <form id="deleteForm" method="POST" style="display: inline;">
+                {{ csrfField() }}
+            <button
+                  type="submit"
+                  class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Hapus
+            </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          function confirmDelete(id, name) {
+            document.getElementById("pegawaiName").textContent = name;
+            document.getElementById("deleteForm").action = `/pegawai/${id}/delete`;
+            document.getElementById("deleteModal").classList.remove("hidden");
+            document.getElementById("deleteModal").classList.add("flex");
+          }
+          
+          function closeDeleteModal() {
+            document.getElementById("deleteModal").classList.add("hidden");
+            document.getElementById("deleteModal").classList.remove("flex");
+          }
+          // Close modal when clicking outside
+          
+          document.getElementById("deleteModal").addEventListener("click", function(e) {
+            if (e.target === this) {
+              closeDeleteModal();
+            }
+          });
+        </script>
+      @endslot
+    @end

@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import UnitKerja from '#models/unit_kerja'
+import Pegawai from '#models/pegawai'
 
 export default class UnitKerjasController {
   async index({ view, response, request }: HttpContext) {
@@ -9,7 +10,6 @@ export default class UnitKerjasController {
 
       let query = UnitKerja.query().orderBy('nama_unit', 'asc')
 
-      // Add search functionality
       if (search) {
         query = query
           .where('nama_unit', 'LIKE', `%${search}%`)
@@ -34,7 +34,6 @@ export default class UnitKerjasController {
     try {
       const data = request.only(['nama_unit', 'lokasi'])
 
-      // Validasi manual
       if (!data.nama_unit || data.nama_unit.trim() === '') {
         session.flash('error', 'Nama unit kerja tidak boleh kosong')
         return response.redirect().back()
@@ -55,10 +54,16 @@ export default class UnitKerjasController {
     }
   }
 
-  async show({ params, view }: HttpContext) {
+  async show({ response, params, view }: HttpContext) {
     try {
       const unitKerja = await UnitKerja.findOrFail(params.id)
-      return view.render('pages/unit-kerja/show', { unitKerja })
+      const totalPegawais = await Pegawai.query()
+        .where('unit_kerja_id', unitKerja.id)
+        .count('* as total')
+        .pojo<{ total: number }>()
+      const totalPegawai = totalPegawais.length > 0 ? totalPegawais[0].total : 0
+
+      return view.render('pages/unit-kerja/show', { unitKerja, totalPegawai })
     } catch (error) {
       return response.status(404).json({ error: 'Unit kerja tidak ditemukan' })
     }

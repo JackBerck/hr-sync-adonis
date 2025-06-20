@@ -13,26 +13,22 @@ export default class PegawaisController {
 
       let query = Pegawai.query().preload('unitKerja').preload('jabatan').orderBy('nama', 'asc')
 
-      // Add search functionality
       if (search) {
         query = query.where((builder) => {
           builder.where('nama', 'LIKE', `%${search}%`).orWhere('nip', 'LIKE', `%${search}%`)
         })
       }
 
-      // Filter by unit kerja
       if (unitKerjaId && unitKerjaId !== '') {
         query = query.where('unit_kerja_id', Number.parseInt(unitKerjaId))
       }
 
-      // Filter by jabatan
       if (jabatanId && jabatanId !== '') {
         query = query.where('jabatan_id', Number.parseInt(jabatanId))
       }
 
       const pegawais = await query.paginate(page, 10)
 
-      // Get all unit kerja and jabatan for filter dropdowns
       const unitKerjas = await UnitKerja.query().orderBy('nama_unit', 'asc')
       const jabatans = await Jabatan.query().orderBy('nama_jabatan', 'asc')
 

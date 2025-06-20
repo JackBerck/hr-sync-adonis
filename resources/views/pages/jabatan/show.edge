@@ -191,7 +191,7 @@
                 Total Tunjangan
               </p>
               <p class="text-lg font-bold text-foreground">
-                Rp {{ jabatan.tunjangan.toLocaleString('id-ID') }}
+                {{ new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(jabatan.tunjangan) }}
               </p>
             </div>
           </div>
