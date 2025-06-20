@@ -61,3 +61,5 @@ router.post('/absensi', [AbsensiController, 'store']).as('absensi.store')
 router.get('/absensi/:tanggal', [AbsensiController, 'show']).as('absensi.show')
 router.get('/absensi/:tanggal/edit', [AbsensiController, 'edit']).as('absensi.edit')
 router.post('/absensi/:tanggal/delete', [AbsensiController, 'destroy']).as('absensi.destroy')
+
+router.get('/dashboard', '#controllers/dashboard_controller.index').as('dashboard.index')

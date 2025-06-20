@@ -284,67 +284,119 @@ export default class AbsensisController {
   async show({ params, view, response }: HttpContext) {
     try {
       const tanggal = params.tanggal
-      const targetDate = new Date(tanggal)
+      console.log('Received date param:', tanggal)
 
-      // Get attendance for this date
-      const attendances = await Absensi.query()
-        .where('tanggal', targetDate)
-        .preload('pegawai', (pegawaiQuery) => {
-          pegawaiQuery.preload('unitKerja').preload('jabatan')
-        })
-        .orderBy('pegawai.nama', 'asc')
+      // Parse and validate date
+      let targetDate: Date
+      try {
+        // Try parsing the date parameter
+        if (tanggal.includes('-')) {
+          // Format YYYY-MM-DD
+          targetDate = new Date(tanggal + 'T00:00:00.000Z')
+        } else {
+          // Other formats
+          targetDate = new Date(tanggal)
+        }
 
-      if (attendances.length === 0) {
+        // Validate date
+        if (Number.isNaN(targetDate.getTime())) {
+          throw new Error('Invalid date')
+        }
+
+        // Normalize to local date without time
+        targetDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate())
+
+        console.log('Parsed target date:', targetDate)
+      } catch (error) {
+        console.error('Date parsing error:', error)
         return response.redirect('/absensi')
       }
 
-      // Transform data
-      const transformedAttendances = attendances.map((absensi) => ({
-        id: absensi.id,
-        status: absensi.status,
-        createdAt: absensi.createdAt,
-        updatedAt: absensi.updatedAt,
-        createdAtFormatted: absensi.createdAt.toString(),
-        updatedAtFormatted: absensi.updatedAt.toString(),
-        pegawai: {
-          id: absensi.pegawai.id,
-          nama: absensi.pegawai.nama,
-          nip: absensi.pegawai.nip,
-          jabatan: {
-            id: absensi.pegawai.jabatan?.id || null,
-            nama_jabatan: absensi.pegawai.jabatan?.nama_jabatan || 'Tidak ada jabatan',
-          },
-          unitKerja: {
-            id: absensi.pegawai.unitKerja?.id || null,
-            nama_unit: absensi.pegawai.unitKerja?.nama_unit || 'Tidak ada unit kerja',
-          },
-        },
-      }))
+      // Get all attendances for the date with pegawai relation
+      const attendances = await Absensi.query()
+        .where('tanggal', targetDate)
+        .preload('pegawai', (pegawaiQuery) => {
+          pegawaiQuery.preload('jabatan')
+          pegawaiQuery.preload('unitKerja')
+        })
+        .orderBy('id', 'asc')
+
+      console.log('Found attendances:', attendances.length)
+
+      // Sort attendances by pegawai nama after loading
+      const sortedAttendances = attendances.sort((a, b) =>
+        a.pegawai.nama.localeCompare(b.pegawai.nama, 'id-ID')
+      )
+
+      // Get all pegawai to calculate stats
+      const allPegawai = await Pegawai.query()
+        .preload('jabatan')
+        .preload('unitKerja')
+        .orderBy('nama', 'asc')
 
       // Calculate statistics
       const stats = {
-        hadir: 0,
-        izin: 0,
-        sakit: 0,
-        alfa: 0,
+        hadir: attendances.filter((a) => a.status === 'hadir').length,
+        izin: attendances.filter((a) => a.status === 'izin').length,
+        sakit: attendances.filter((a) => a.status === 'sakit').length,
+        alfa: attendances.filter((a) => a.status === 'alfa').length,
       }
 
-      transformedAttendances.forEach((absensi) => {
-        stats[absensi.status]++
+      const totalPegawai = allPegawai.length
+      const totalAbsensi = attendances.length
+      const totalBelumAbsen = totalPegawai - totalAbsensi
+
+      // Format dates for template - more robust formatting
+      const tanggalFormatted =
+        targetDate.getFullYear() +
+        '-' +
+        String(targetDate.getMonth() + 1).padStart(2, '0') +
+        '-' +
+        String(targetDate.getDate()).padStart(2, '0')
+
+      // Add formatted timestamps to attendances with safe date handling
+      const attendancesWithFormattedDates = sortedAttendances.map((attendance) => {
+        let createdAtFormatted = ''
+        let updatedAtFormatted = ''
+
+        try {
+          createdAtFormatted = attendance.createdAt.toISO() || ''
+        } catch (error) {
+          console.warn('Error formatting createdAt:', error)
+          createdAtFormatted = new Date().toISOString()
+        }
+
+        try {
+          updatedAtFormatted = attendance.updatedAt.toISO() || ''
+        } catch (error) {
+          console.warn('Error formatting updatedAt:', error)
+          updatedAtFormatted = new Date().toISOString()
+        }
+
+        return {
+          ...attendance.toJSON(),
+          createdAtFormatted,
+          updatedAtFormatted,
+        }
       })
 
-      const totalPegawai = await Pegawai.query().count('* as total')
-      const totalAbsensi = transformedAttendances.length
-      const totalBelumAbsen = Number(totalPegawai[0].$extras.total) - totalAbsensi
-
-      return view.render('pages/absensi/show', {
-        tanggal,
-        tanggalFormatted: targetDate.toISOString(),
-        attendances: transformedAttendances,
+      console.log('Show attendance data:', {
+        tanggal: tanggalFormatted,
+        totalAttendances: attendances.length,
         stats,
+        totalPegawai,
         totalAbsensi,
         totalBelumAbsen,
-        totalPegawai: Number(totalPegawai[0].$extras.total),
+      })
+
+      return view.render('pages/absensi/show', {
+        attendances: attendancesWithFormattedDates,
+        tanggal: tanggalFormatted,
+        tanggalFormatted,
+        stats,
+        totalPegawai,
+        totalAbsensi,
+        totalBelumAbsen,
       })
     } catch (error) {
       console.error('Error in show attendance:', error)
