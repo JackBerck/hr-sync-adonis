@@ -165,7 +165,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="text-sm text-foreground">
-                        Rp {{ jabatan.tunjangan.toLocaleString('id-ID') }}
+                        {{ new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(jabatan.tunjangan) }}
                       </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">

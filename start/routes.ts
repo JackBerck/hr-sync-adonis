@@ -11,6 +11,8 @@ const JabatanController = () => import('#controllers/jabatans_controller')
 const UnitKerjaController = () => import('#controllers/unit_kerjas_controller')
 const PegawaiController = () => import('#controllers/pegawais_controller')
 const CutiController = () => import('#controllers/cutis_controller')
+const AbsensiController = () => import('#controllers/absensis_controller')
+
 import router from '@adonisjs/core/services/router'
 
 router.on('/').render('pages/home')
@@ -51,3 +53,11 @@ router.post('/cuti/:id/delete', [CutiController, 'destroy']).as('cuti.destroy')
 
 // Helper route for cuti summary
 router.get('/api/cuti/summary/:pegawaiId/:tahun', [CutiController, 'getSummary']).as('cuti.summary')
+
+// Absensi routes
+router.get('/absensi', [AbsensiController, 'index']).as('absensi.index')
+router.get('/absensi/create', [AbsensiController, 'create']).as('absensi.create')
+router.post('/absensi', [AbsensiController, 'store']).as('absensi.store')
+router.get('/absensi/:tanggal', [AbsensiController, 'show']).as('absensi.show')
+router.get('/absensi/:tanggal/edit', [AbsensiController, 'edit']).as('absensi.edit')
+router.post('/absensi/:tanggal/delete', [AbsensiController, 'destroy']).as('absensi.destroy')

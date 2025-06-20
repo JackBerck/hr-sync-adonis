@@ -1,4 +1,5 @@
 import Jabatan from '#models/jabatan'
+import Pegawai from '#models/pegawai'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class JabatansController {
@@ -57,7 +58,15 @@ export default class JabatansController {
 
   async show({ params, view }: HttpContext) {
     const jabatan = await Jabatan.findOrFail(params.id)
-    return view.render('pages/jabatan/show', { jabatan })
+
+    const result = await Pegawai.query()
+      .where('jabatan_id', jabatan.id)
+      .count('* as total')
+      .pojo<{ total: number }>() // <-- INI KUNCINYA
+
+    const totalPegawai = result.length > 0 ? result[0].total : 0
+
+    return view.render('pages/jabatan/show', { jabatan, totalPegawai })
   }
 
   async edit({ params, view }: HttpContext) {

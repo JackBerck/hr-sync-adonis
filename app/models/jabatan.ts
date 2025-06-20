@@ -9,7 +9,7 @@ export default class Jabatan extends BaseModel {
   declare nama_jabatan: string
 
   @column()
-  declare tunjangan: Number
+  declare tunjangan: number
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
