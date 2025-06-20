@@ -359,15 +359,35 @@ export default class CutisController {
         })
         .firstOrFail()
 
-      // Get all pegawai for dropdown
       const pegawais = await Pegawai.query()
         .preload('unitKerja')
         .preload('jabatan')
         .orderBy('nama', 'asc')
 
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      if (!cuti.tanggalMulai || !cuti.tanggalAkhir) {
+        throw new Error('Tanggal mulai atau tanggal akhir tidak valid')
+      }
+
+      const tanggalMulai = new Date(cuti.tanggalMulai)
+      const tanggalAkhir = new Date(cuti.tanggalAkhir)
+
+      if (Number.isNaN(tanggalMulai.getTime()) || Number.isNaN(tanggalAkhir.getTime())) {
+        throw new Error('Format tanggal tidak valid')
+      }
+
+      const isUpcoming = tanggalMulai > today
+      const isOngoing = tanggalMulai <= today && tanggalAkhir >= today
+      const isCompleted = tanggalAkhir < today
+
       return view.render('pages/cuti/edit', {
         cuti,
         pegawais,
+        isUpcoming,
+        isOngoing,
+        isCompleted,
       })
     } catch (error) {
       console.error('Error in edit:', error)
