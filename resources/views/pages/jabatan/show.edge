@@ -331,7 +331,7 @@
       function confirmDelete(id, name) {
         document.getElementById("jabatanName").textContent = name;
         // Update action URL ke route yang baru
-        document.getElementById("deleteForm").action = `/jabatan/${id}/delete`;
+        document.getElementById("deleteForm").action = `/jabatan/${id}/delete?_method=DELETE`;
         document.getElementById("deleteModal").classList.remove("hidden");
         document.getElementById("deleteModal").classList.add("flex");
       }

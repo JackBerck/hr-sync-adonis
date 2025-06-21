@@ -75,7 +75,7 @@
 
       <!-- Form Section -->
       <div class="bg-background border rounded-lg shadow-sm p-6">
-        <form method="POST" action="/unit-kerja/{{ unitKerja.id }}" class="space-y-6">
+        <form method="POST" action="/unit-kerja/{{ unitKerja.id }}?_method=PUT" class="space-y-6">
           {{ csrfField() }}
           
           <!-- Nama Unit Field -->

@@ -649,31 +649,31 @@
       
       if (isUpcoming) {
         statusBadge.innerHTML = `
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                          </svg>
-                                          Akan Datang
-                                        </span>
-                                      `;
+                                              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Akan Datang
+                                              </span>
+                                            `;
       } else if (isOngoing) {
         statusBadge.innerHTML = `
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                          </svg>
-                                          Sedang Cuti
-                                        </span>
-                                      `;
+                                              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Sedang Cuti
+                                              </span>
+                                            `;
       } else {
         statusBadge.innerHTML = `
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                          </svg>
-                                          Selesai
-                                        </span>
-                                      `;
+                                              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                Selesai
+                                              </span>
+                                            `;
       }
       // Action buttons
       
@@ -681,25 +681,25 @@
       
       if (isUpcoming) {
         actionButtons.innerHTML = `
-                                        <a
-                                          href="/cuti/${cutiId}/edit"
-                                          class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                                        >
-                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                          </svg>
-                                          Edit Cuti
-                                        </a>
-                                        <button
-                                          onclick="confirmDelete(${cutiId}, '${pegawaiNama}', '${formatDate(tanggalMulai)}')"
-                                          class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                                        >
-                                          <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                          </svg>
-                                          Hapus
-                                        </button>
-                                      `;
+                                              <a
+                                                href="/cuti/${cutiId}/edit"
+                                                class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                              >
+                                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                                Edit Cuti
+                                              </a>
+                                              <button
+                                                onclick="confirmDelete(${cutiId}, '${pegawaiNama}', '${formatDate(tanggalMulai)}')"
+                                                class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                              >
+                                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                                Hapus
+                                              </button>
+                                            `;
       }
       // Countdown section
       
@@ -708,51 +708,51 @@
       if (isUpcoming) {
         const daysUntil = Math.ceil((tanggalMulai.getTime() - today.getTime()) / (1e3 * 60 * 60 * 24));
         countdownSection.innerHTML = `
-                                        <div>
-                                          <label class="block text-sm font-medium text-muted-foreground mb-1">Mulai Dalam</label>
-                                          <div class="flex items-center space-x-2">
-                                            <svg class="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            <div>
-                                              <p class="text-lg font-bold text-yellow-600">${daysUntil} Hari</p>
-                                              <p class="text-xs text-muted-foreground">Lagi</p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      `;
+                                              <div>
+                                                <label class="block text-sm font-medium text-muted-foreground mb-1">Mulai Dalam</label>
+                                                <div class="flex items-center space-x-2">
+                                                  <svg class="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                  </svg>
+                                                  <div>
+                                                    <p class="text-lg font-bold text-yellow-600">${daysUntil} Hari</p>
+                                                    <p class="text-xs text-muted-foreground">Lagi</p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            `;
       } else if (isOngoing) {
         const daysLeft = Math.ceil((tanggalAkhir.getTime() - today.getTime()) / (1e3 * 60 * 60 * 24));
         countdownSection.innerHTML = `
-                                        <div>
-                                          <label class="block text-sm font-medium text-muted-foreground mb-1">Sisa Cuti</label>
-                                          <div class="flex items-center space-x-2">
-                                            <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            <div>
-                                              <p class="text-lg font-bold text-green-600">${daysLeft} Hari</p>
-                                              <p class="text-xs text-muted-foreground">Lagi</p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      `;
+                                              <div>
+                                                <label class="block text-sm font-medium text-muted-foreground mb-1">Sisa Cuti</label>
+                                                <div class="flex items-center space-x-2">
+                                                  <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                  </svg>
+                                                  <div>
+                                                    <p class="text-lg font-bold text-green-600">${daysLeft} Hari</p>
+                                                    <p class="text-xs text-muted-foreground">Lagi</p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            `;
       } else {
         const daysAgo = Math.ceil((today.getTime() - tanggalAkhir.getTime()) / (1e3 * 60 * 60 * 24));
         countdownSection.innerHTML = `
-                                        <div>
-                                          <label class="block text-sm font-medium text-muted-foreground mb-1">Selesai</label>
-                                          <div class="flex items-center space-x-2">
-                                            <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                            <div>
-                                              <p class="text-lg font-bold text-gray-600">${daysAgo} Hari</p>
-                                              <p class="text-xs text-muted-foreground">Yang lalu</p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      `;
+                                              <div>
+                                                <label class="block text-sm font-medium text-muted-foreground mb-1">Selesai</label>
+                                                <div class="flex items-center space-x-2">
+                                                  <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                  </svg>
+                                                  <div>
+                                                    <p class="text-lg font-bold text-gray-600">${daysAgo} Hari</p>
+                                                    <p class="text-xs text-muted-foreground">Yang lalu</p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            `;
       }
       // Timeline
       
@@ -762,46 +762,46 @@
       
       if (isUpcoming) {
         timelineIcon.innerHTML = `
-                                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                                          <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                          </svg>
-                                        </div>
-                                      `;
+                                              <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                              </div>
+                                            `;
         timelineStatus.innerHTML = `
-                                        <p class="text-sm font-medium text-foreground">Menunggu mulai cuti</p>
-                                        <p class="text-xs text-muted-foreground">Cuti akan dimulai ${formatDate(tanggalMulai)}</p>
-                                      `;
+                                              <p class="text-sm font-medium text-foreground">Menunggu mulai cuti</p>
+                                              <p class="text-xs text-muted-foreground">Cuti akan dimulai ${formatDate(tanggalMulai)}</p>
+                                            `;
       } else if (isOngoing) {
         timelineIcon.innerHTML = `
-                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                          <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                          </svg>
-                                        </div>
-                                      `;
+                                              <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                              </div>
+                                            `;
         timelineStatus.innerHTML = `
-                                        <p class="text-sm font-medium text-foreground">Sedang dalam masa cuti</p>
-                                        <p class="text-xs text-muted-foreground">Dimulai ${formatDate(tanggalMulai)}, berakhir ${formatDate(tanggalAkhir)}</p>
-                                      `;
+                                              <p class="text-sm font-medium text-foreground">Sedang dalam masa cuti</p>
+                                              <p class="text-xs text-muted-foreground">Dimulai ${formatDate(tanggalMulai)}, berakhir ${formatDate(tanggalAkhir)}</p>
+                                            `;
       } else {
         timelineIcon.innerHTML = `
-                                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                                          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                          </svg>
-                                        </div>
-                                      `;
+                                              <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                              </div>
+                                            `;
         timelineStatus.innerHTML = `
-                                        <p class="text-sm font-medium text-foreground">Cuti telah selesai</p>
-                                        <p class="text-xs text-muted-foreground">Selesai pada ${formatDate(tanggalAkhir)}</p>
-                                      `;
+                                              <p class="text-sm font-medium text-foreground">Cuti telah selesai</p>
+                                              <p class="text-xs text-muted-foreground">Selesai pada ${formatDate(tanggalAkhir)}</p>
+                                            `;
       }
       // Delete modal functions
       
       function confirmDelete(id, nama, tanggal) {
         document.getElementById("cutiDetails").textContent = `${nama} - ${tanggal}`;
-        document.getElementById("deleteForm").action = `/cuti/${id}/delete`;
+        document.getElementById("deleteForm").action = `/cuti/${id}/delete?_method=DELETE`;
         document.getElementById("deleteModal").classList.remove("hidden");
         document.getElementById("deleteModal").classList.add("flex");
       }

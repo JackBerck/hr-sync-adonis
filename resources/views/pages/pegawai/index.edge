@@ -674,7 +674,7 @@
         <script>
           function confirmDelete(id, name) {
             document.getElementById("pegawaiName").textContent = name;
-            document.getElementById("deleteForm").action = `/pegawai/${id}/delete`;
+            document.getElementById("deleteForm").action = `/pegawai/${id}/delete?_method=DELETE`;
             document.getElementById("deleteModal").classList.remove("hidden");
             document.getElementById("deleteModal").classList.add("flex");
           }

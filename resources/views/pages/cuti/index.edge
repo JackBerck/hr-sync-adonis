@@ -759,7 +759,7 @@
                         const tanggalMulaiStr = rowElement.dataset.tanggalMulai;
                         const tanggal = tanggalMulaiStr ? new Intl.DateTimeFormat("id-ID").format(new Date(tanggalMulaiStr)) : "";
                         document.getElementById("cutiDetails").textContent = `${nama} - ${tanggal}`;
-                        document.getElementById("deleteForm").action = `/cuti/${id}/delete`;
+                        document.getElementById("deleteForm").action = `/cuti/${id}/delete?_method=DELETE`;
                         document.getElementById("deleteModal").classList.remove("hidden");
                         document.getElementById("deleteModal").classList.add("flex");
                       }

@@ -347,7 +347,7 @@
     <script>
       function confirmDelete(id, name) {
         document.getElementById("unitKerjaName").textContent = name;
-        document.getElementById("deleteForm").action = `/unit-kerja/${id}/delete`;
+        document.getElementById("deleteForm").action = `/unit-kerja/${id}/delete?_method=DELETE`;
         document.getElementById("deleteModal").classList.remove("hidden");
         document.getElementById("deleteModal").classList.add("flex");
       }

@@ -67,7 +67,7 @@
 
       <!-- Form Section -->
       <div class="bg-background border rounded-lg shadow-sm p-6">
-        <form method="POST" action="/jabatan/{{ jabatan.id }}" class="space-y-6">
+        <form method="POST" action="/jabatan/{{ jabatan.id }}?_method=PUT" class="space-y-6">
           <input type="hidden" name="_method" value="PUT" />
           {{ csrfField() }}
           <!-- Nama Jabatan Field -->

@@ -45,8 +45,8 @@ router
     router.post('/jabatan', [JabatanController, 'store']).as('jabatan.store')
     router.get('/jabatan/:id', [JabatanController, 'show']).as('jabatan.show')
     router.get('/jabatan/:id/edit', [JabatanController, 'edit']).as('jabatan.edit')
-    router.post('/jabatan/:id', [JabatanController, 'update']).as('jabatan.update')
-    router.post('/jabatan/:id/delete', [JabatanController, 'destroy']).as('jabatan.destroy')
+    router.put('/jabatan/:id', [JabatanController, 'update']).as('jabatan.update')
+    router.delete('/jabatan/:id/delete', [JabatanController, 'destroy']).as('jabatan.destroy')
 
     // Unit Kerja routes
     router.get('/unit-kerja', [UnitKerjaController, 'index']).as('unitKerja.index')
@@ -54,8 +54,10 @@ router
     router.post('/unit-kerja', [UnitKerjaController, 'store']).as('unitKerja.store')
     router.get('/unit-kerja/:id', [UnitKerjaController, 'show']).as('unitKerja.show')
     router.get('/unit-kerja/:id/edit', [UnitKerjaController, 'edit']).as('unitKerja.edit')
-    router.post('/unit-kerja/:id', [UnitKerjaController, 'update']).as('unitKerja.update')
-    router.post('/unit-kerja/:id/delete', [UnitKerjaController, 'destroy']).as('unitKerja.destroy')
+    router.put('/unit-kerja/:id', [UnitKerjaController, 'update']).as('unitKerja.update')
+    router
+      .delete('/unit-kerja/:id/delete', [UnitKerjaController, 'destroy'])
+      .as('unitKerja.destroy')
 
     // Pegawai routes
     router.get('/pegawai', [PegawaiController, 'index']).as('pegawai.index')
@@ -63,8 +65,8 @@ router
     router.post('/pegawai', [PegawaiController, 'store']).as('pegawai.store')
     router.get('/pegawai/:id', [PegawaiController, 'show']).as('pegawai.show')
     router.get('/pegawai/:id/edit', [PegawaiController, 'edit']).as('pegawai.edit')
-    router.post('/pegawai/:id', [PegawaiController, 'update']).as('pegawai.update')
-    router.post('/pegawai/:id/delete', [PegawaiController, 'destroy']).as('pegawai.destroy')
+    router.put('/pegawai/:id', [PegawaiController, 'update']).as('pegawai.update')
+    router.delete('/pegawai/:id/delete', [PegawaiController, 'destroy']).as('pegawai.destroy')
 
     // Cuti routes
     router.get('/cuti', [CutiController, 'index']).as('cuti.index')
@@ -72,8 +74,8 @@ router
     router.post('/cuti', [CutiController, 'store']).as('cuti.store')
     router.get('/cuti/:id', [CutiController, 'show']).as('cuti.show')
     router.get('/cuti/:id/edit', [CutiController, 'edit']).as('cuti.edit')
-    router.post('/cuti/:id', [CutiController, 'update']).as('cuti.update')
-    router.post('/cuti/:id/delete', [CutiController, 'destroy']).as('cuti.destroy')
+    router.put('/cuti/:id', [CutiController, 'update']).as('cuti.update')
+    router.delete('/cuti/:id/delete', [CutiController, 'destroy']).as('cuti.destroy')
 
     // Helper route for cuti summary
     router
@@ -86,6 +88,6 @@ router
     router.post('/absensi', [AbsensiController, 'store']).as('absensi.store')
     router.get('/absensi/:tanggal', [AbsensiController, 'show']).as('absensi.show')
     router.get('/absensi/:tanggal/edit', [AbsensiController, 'edit']).as('absensi.edit')
-    router.post('/absensi/:tanggal/delete', [AbsensiController, 'destroy']).as('absensi.destroy')
+    router.delete('/absensi/:tanggal/delete', [AbsensiController, 'destroy']).as('absensi.destroy')
   })
   .use(middleware.auth())

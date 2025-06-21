@@ -107,7 +107,7 @@
 
       <!-- Form Section -->
       <div class="bg-background border rounded-lg shadow-sm p-6">
-        <form method="POST" action="/pegawai/{{ pegawai.id }}" class="space-y-6">
+        <form method="POST" action="/pegawai/{{ pegawai.id }}?_method=PUT" class="space-y-6">
           {{ csrfField() }}
           <!-- Personal Information Section -->
           <div class="space-y-4">

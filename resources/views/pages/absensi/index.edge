@@ -497,7 +497,7 @@
                       year: "numeric"
                     }).format(new Date(tanggal));
                     document.getElementById("deleteDate").textContent = tanggalDisplay;
-                    document.getElementById("deleteForm").action = `/absensi/${tanggal}/delete`;
+                    document.getElementById("deleteForm").action = `/absensi/${tanggal}/delete?_method=DELETE`;
                     document.getElementById("deleteModal").classList.remove("hidden");
                     document.getElementById("deleteModal").classList.add("flex");
                   }
