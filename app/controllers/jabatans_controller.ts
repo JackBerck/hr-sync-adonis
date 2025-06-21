@@ -1,6 +1,7 @@
 import Jabatan from '#models/jabatan'
 import Pegawai from '#models/pegawai'
 import type { HttpContext } from '@adonisjs/core/http'
+import { createJabatanValidator, updateJabatanValidator } from '#validators/jabatan'
 
 export default class JabatansController {
   async index({ view, request, response }: HttpContext) {
@@ -30,28 +31,22 @@ export default class JabatansController {
 
   async store({ request, response, session }: HttpContext) {
     try {
-      const data = request.only(['nama_jabatan', 'tunjangan'])
-
-      // Validasi manual
-      if (!data.nama_jabatan || data.nama_jabatan.trim() === '') {
-        session.flash('error', 'Nama jabatan tidak boleh kosong')
-        return response.redirect().back()
-      }
-
-      if (!data.tunjangan || Number.isNaN(Number(data.tunjangan))) {
-        session.flash('error', 'Tunjangan harus berupa angka')
-        return response.redirect().back()
-      }
-
-      // Convert tunjangan ke number
-      data.tunjangan = Number(data.tunjangan)
+      // ✅ Menggunakan validator untuk validasi data
+      const data = await request.validateUsing(createJabatanValidator)
 
       await Jabatan.create(data)
 
       session.flash('success', 'Jabatan berhasil ditambahkan')
       return response.redirect().toPath('/jabatan')
     } catch (error) {
-      session.flash('error', 'Gagal membuat data jabatan')
+      // ✅ Handle validation errors
+      if (error.messages) {
+        // Jika ada validation errors, flash ke session
+        session.flash('errors', error.messages)
+        session.flash('error', 'Data yang dimasukkan tidak valid')
+      } else {
+        session.flash('error', 'Gagal membuat data jabatan')
+      }
       return response.redirect().back()
     }
   }
@@ -62,7 +57,7 @@ export default class JabatansController {
     const result = await Pegawai.query()
       .where('jabatan_id', jabatan.id)
       .count('* as total')
-      .pojo<{ total: number }>() // <-- INI KUNCINYA
+      .pojo<{ total: number }>()
 
     const totalPegawai = result.length > 0 ? result[0].total : 0
 
@@ -77,20 +72,9 @@ export default class JabatansController {
   async update({ params, request, response, session }: HttpContext) {
     try {
       const jabatan = await Jabatan.findOrFail(params.id)
-      const data = request.only(['nama_jabatan', 'tunjangan'])
 
-      // Validasi
-      if (!data.nama_jabatan || data.nama_jabatan.trim() === '') {
-        session.flash('error', 'Nama jabatan tidak boleh kosong')
-        return response.redirect().back()
-      }
-
-      if (!data.tunjangan || Number.isNaN(Number(data.tunjangan))) {
-        session.flash('error', 'Tunjangan harus berupa angka')
-        return response.redirect().back()
-      }
-
-      data.tunjangan = Number(data.tunjangan)
+      // ✅ Menggunakan validator untuk validasi data update
+      const data = await request.validateUsing(updateJabatanValidator)
 
       jabatan.merge(data)
       await jabatan.save()
@@ -98,7 +82,13 @@ export default class JabatansController {
       session.flash('success', 'Jabatan berhasil diperbarui')
       return response.redirect().toPath('/jabatan')
     } catch (error) {
-      session.flash('error', 'Gagal memperbarui data jabatan')
+      // ✅ Handle validation errors
+      if (error.messages) {
+        session.flash('errors', error.messages)
+        session.flash('error', 'Data yang dimasukkan tidak valid')
+      } else {
+        session.flash('error', 'Gagal memperbarui data jabatan')
+      }
       return response.redirect().back()
     }
   }
@@ -106,6 +96,23 @@ export default class JabatansController {
   async destroy({ params, response, session }: HttpContext) {
     try {
       const jabatan = await Jabatan.findOrFail(params.id)
+
+      // ✅ Cek apakah jabatan masih digunakan oleh pegawai
+      const pegawaiCount = await Pegawai.query()
+        .where('jabatan_id', jabatan.id)
+        .count('* as total')
+        .pojo<{ total: number }>()
+
+      const totalPegawai = pegawaiCount.length > 0 ? pegawaiCount[0].total : 0
+
+      if (totalPegawai > 0) {
+        session.flash(
+          'error',
+          `Tidak dapat menghapus jabatan karena masih digunakan oleh ${totalPegawai} pegawai`
+        )
+        return response.redirect().back()
+      }
+
       await jabatan.delete()
 
       session.flash('success', 'Jabatan berhasil dihapus')
