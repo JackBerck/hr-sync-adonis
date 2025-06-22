@@ -61,7 +61,7 @@ export default class PegawaisController {
 
   async store({ request, response, session }: HttpContext) {
     try {
-      const data = request.only(['nip', 'nama', 'unit_kerja_id', 'jabatan_id'])
+      const data = request.only(['nip', 'nama', 'gaji', 'unit_kerja_id', 'jabatan_id'])
 
       // Validasi manual
       if (!data.nip || data.nip.trim() === '') {
@@ -71,6 +71,11 @@ export default class PegawaisController {
 
       if (!data.nama || data.nama.trim() === '') {
         session.flash('error', 'Nama pegawai tidak boleh kosong')
+        return response.redirect().back()
+      }
+
+      if (!data.gaji || Number.isNaN(Number(data.gaji)) || data.gaji <= 0) {
+        session.flash('error', 'Gaji harus diisi dengan angka yang valid')
         return response.redirect().back()
       }
 

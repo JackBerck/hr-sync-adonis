@@ -15,6 +15,9 @@ export default class Pegawai extends BaseModel {
   @column()
   declare nama: string
 
+  @column()
+  declare gaji: number
+
   @column({ columnName: 'unit_kerja_id' })
   declare unitKerjaId: number
 

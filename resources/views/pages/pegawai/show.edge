@@ -273,6 +273,13 @@
                   {{ new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(pegawai.jabatan.tunjangan) }}
                 </span>
               </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-muted-foreground">Total Gaji (Pokok + Tunjangan)</span>
+                <span class="text-sm font-semibold text-gray-100 bg-green-500 rounded-lg px-2 py-1">
+                  @let( totalGaji = parseInt(pegawai.gaji) + parseInt(pegawai.jabatan.tunjangan) )
+                  {{ new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalGaji) }}
+                </span>
+              </div>
             </div>
           </div>
 

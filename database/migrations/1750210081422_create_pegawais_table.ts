@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('nip', 20).notNullable().unique()
       table.string('nama', 255).notNullable()
+      table.decimal('gaji', 15, 2).unsigned().notNullable()
       table.integer('unit_kerja_id').unsigned().notNullable()
       table.foreign('unit_kerja_id').references('id').inTable('unit_kerjas').onDelete('CASCADE')
       table.integer('jabatan_id').unsigned().notNullable()
